@@ -1,0 +1,37 @@
+﻿@page "/"
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Home</PageTitle>
+
+<div class="container">
+    <div class="row">
+        <div class="dashed-border p-5 mt-5">
+            <div class="flex-centered">
+                <p>Drag and Drop file here</p>
+                <p>Or</p>
+                <InputFile class="btn btn-primary" OnChange="@InputFileUploaded">Upload</InputFile>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p style="color:@(IsValidFile?"Green":"Red")">@Message</p>
+
+@code {
+    private string Message = "";
+    private bool IsValidFile = false;
+
+    private void InputFileUploaded(InputFileChangeEventArgs e)
+    {
+        if (e.File != null && e.FileCount > 0)
+        {
+            string extension = Path.GetExtension(e.File.Name).Replace(".", string.Empty);
+            IsValidFile = ValidFileHelper.IsValid(extension);
+            Message = e.File.Name;
+        }
+        else
+        {
+            Message = "Not Found";
+        }
+    }
+}

@@ -1,0 +1,10 @@
+﻿.dashed-border {
+    border-style: dashed;
+}
+
+.flex-centered {
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    flex-direction:column;
+}
