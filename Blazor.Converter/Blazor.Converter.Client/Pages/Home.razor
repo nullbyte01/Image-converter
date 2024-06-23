@@ -4,13 +4,17 @@
 <PageTitle>Home</PageTitle>
 
 <div class="container">
+    <h1>Image Converter</h1>
     <div class="row">
-        <div class="dashed-border p-5 mt-5">
+        <div class="dashed-border p-5 mt-5 @HoverClass"
+                @ondragenter="OnDragEnter"
+                @ondragleave="OnDragLeave" @ondragover="OnDragEnter">
             <div class="flex-centered">
                 <p>Drag and Drop file here</p>
                 <p>Or</p>
-                <InputFile class="btn btn-primary" OnChange="@InputFileUploaded">Upload</InputFile>
-            </div>
+                <InputFile class="btn btn-primary" OnChange="@InputFileUploaded">Upload</InputFile>         
+
+			</div>
         </div>
     </div>
 </div>
@@ -34,4 +38,13 @@
             Message = "Not Found";
         }
     }
+
+    private string HoverClass = string.Empty;
+
+    void OnDragEnter(DragEventArgs e) => HoverClass = "hover";
+    void OnDragLeave(DragEventArgs e) => HoverClass = string.Empty;
+
+    
+
+
 }
