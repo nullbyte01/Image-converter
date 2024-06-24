@@ -23,3 +23,56 @@
     border-style: solid;
     background-color: #00ca71;
 }
+
+.container {
+    height: 100px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.convert-text {
+    color: white;
+    vertical-align: text-bottom;
+    font-family: Helvetica;
+    font-size: 25px;
+    font-weight: bold;
+    padding-top: 15px;
+    padding-left: 65px;
+}
+
+.to {
+    color: white;
+    vertical-align: text-bottom;
+    font-family: Helvetica;
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: -65px;
+    padding-left: 600px;
+}
+
+#get-file {
+    background-color: white;
+    border: 1px solid blue;
+    width: 100px;
+    height: 30px;
+    line-height: 30px;
+    float: left;
+    text-align: center;
+    list-style: none;
+}
+
+#post-file {
+    background-color: white;
+    border: 1px solid blue;
+    width: 100px;
+    height: 30px;
+    line-height: 30px;
+    float: left;
+    text-align: center;
+    list-style: none;
+}
+
+.btn-success {
+    float: right;
+}
