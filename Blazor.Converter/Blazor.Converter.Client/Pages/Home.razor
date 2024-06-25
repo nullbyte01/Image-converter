@@ -5,166 +5,169 @@
 <PageTitle>Home</PageTitle>
 
 <div class="container">
-	<h1>Image Converter</h1>
-	<div class="row">
-		<div class="dashed-border p-5 mt-5 @HoverClass">
-			<div class="flex-centered">
-				<p>Drag and Drop file here</p>
-				<p>Or</p>
-				<InputFile class="btn btn-primary" @ondragenter="OnDragEnter"
-						   @ondragleave="OnDragLeave" OnChange="@InputFileUploaded">Upload</InputFile>
+    <h1>Image Converter</h1>
+    <div class="row">
+        <div class="dashed-border p-5 mt-5 @HoverClass">
+            <div class="flex-centered">
+                <p>Drag and Drop file here</p>
+                <p>Or</p>
+                <InputFile class="btn btn-primary" @ondragenter="OnDragEnter"
+                           @ondragleave="OnDragLeave" OnChange="@InputFileUploaded">Upload</InputFile>
 
-			</div>
-		</div>
+            </div>
+        </div>
 
-		<div class="container p-3 my-3 bg-dark">
-			<p class="convert-text">Convert</p>
+        @if (canViewConvertScreen)
+        {
+            <div class="container p-3 my-3 bg-dark">
+                <p class="convert-text">Convert</p>
 
 
-			@* <label for="size">PNG</label> *@
-			<select id="get-file" name="get-file" @bind="convertDefault" disabled>
-				@* <option value="png">PNG</option>
-				<option value="jpg">JPG</option>
-				<option value="jpeg">JPEG</option>
-				<option value="svg">SVG</option>
-				<option value="gif">GIF</option> *@
-				@if (convertFrom != null)
-				{
-					@foreach (var ext in convertFrom)
-					{
-						<option>@ext</option>
-					}
-				}
+                @* <label for="size">PNG</label> *@
+                <select id="get-file" name="get-file" disabled>
+                    @if (convertFrom != null)
+                    {
+                        @foreach (var ext in convertFrom)
+                        {
+                            <option>@ext</option>
+                        }
+                    }
 
-			</select>
+                </select>
 
-			<p class="to">TO</p>
+                <p class="to">TO</p>
 
-			@* <label for="color">JPG</label> *@
-			<select id="post-file" name="post-file">
-				@* <option value="png">PNG</option>
-				<option value="jpg">JPG</option>
-				<option value="jpeg">JPEG</option>
-				<option value="svg">SVG</option>
-				<option value="gif">GIF</option> *@
+                @* <label for="color">JPG</label> *@
+                <select id="post-file" name="post-file">
 
-				@if (convertTo != null)
-				{
-					@foreach (var ext in convertTo)
-					{
-						<option>@ext</option>
-					}
-				}
-			</select>
+                    @if (convertTo != null)
+                    {
+                        @foreach (var ext in convertTo)
+                        {
+                            <option>@ext</option>
+                        }
+                    }
+                </select>
 
-			<button type="button" class="btn btn-success">Convert</button>
-		</div>
-	</div>
+                <button type="button" class="btn btn-success">Convert</button>
+            </div>
+        }
+
+    </div>
 </div>
 
 <footer>
-	<div class="container">
-		<h4>How to Convert Images?</h4>
-	</div>
+    <div class="container">
+        <h4>How to Convert Images?</h4>
+    </div>
 </footer>
 
 <p style="color:@(IsValidFile?"Green":"Red")">@Message</p>
 
 @code {
-	private string Message = "";
-	private bool IsValidFile = false;
-	private string HoverClass = string.Empty;
-	FFMPEG ffmpeg;
-	string outputFileName = string.Empty;
-	byte[] buffer;
-	public List<string> convertFrom { get; set; }
-	public List<string> convertTo { get; set; }
-	public string convertDefault { get; set; }
+    private string Message = "";
+    private bool IsValidFile = false;
+    private string HoverClass = string.Empty;
+    FFMPEG ffmpeg;
+    string outputFileName = string.Empty;
+    byte[] buffer;
+    public List<string> convertFrom { get; set; }
+    public List<string> convertTo { get; set; }
+    public string convertDefault { get; set; }
+    public bool canViewConvertScreen { get; set; } = false;
 
-	protected override void OnInitialized()
-	{
-		convertFrom = ValidFileHelper.fileTypesSupported;
-		convertTo = ValidFileHelper.fileTypesSupported;
-	}
+    protected override void OnInitialized()
+    {
 
-	protected async override Task OnAfterRenderAsync(bool firstRender)
-	{
-		if (firstRender)
-		{
+    }
 
-			if (FFmpegFactory.Runtime == null)
-			{
-				FFmpegFactory.Logger += WriteLogs;
-				FFmpegFactory.Progress += ProgressChange;
-			}
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
 
-			await FFmpegFactory.Init(JsRuntime);
-			StateHasChanged();
-		}
-	}
+            if (FFmpegFactory.Runtime == null)
+            {
+                FFmpegFactory.Logger += WriteLogs;
+                FFmpegFactory.Progress += ProgressChange;
+            }
 
-	async void ProgressChange(Progress progress)
-	{
-		Console.WriteLine($"PROGRESSCHANGED: {progress.Ratio}");
+            await FFmpegFactory.Init(JsRuntime);
+            StateHasChanged();
+        }
+    }
 
-		if (progress.Ratio == 1)
-		{
-			var response = await ffmpeg.ReadFile(outputFileName);
+    async void ProgressChange(Progress progress)
+    {
+        Console.WriteLine($"PROGRESSCHANGED: {progress.Ratio}");
 
-			// FFmpegFactory.DownloadBufferAsFile(response, outputFileName, "image/jpg");
-			Message = FFmpegFactory.CreateURLFromBuffer(buffer, outputFileName, "image/jpg");
+        if (progress.Ratio == 1)
+        {
+            var response = await ffmpeg.ReadFile(outputFileName);
 
-			StateHasChanged();
-		}
-	}
+            // FFmpegFactory.DownloadBufferAsFile(response, outputFileName, "image/jpg");
+            Message = FFmpegFactory.CreateURLFromBuffer(buffer, outputFileName, "image/jpg");
 
-	void WriteLogs(Logs log)
-	{
-		Console.WriteLine($"{log.Type}: message: {log.Message}");
-	}
+            StateHasChanged();
+        }
+    }
 
-	private async void InputFileUploaded(InputFileChangeEventArgs e)
-	{
-		if (e.File != null && e.FileCount > 0)
-		{
-			string extension = Path.GetExtension(e.File.Name).Replace(".", string.Empty);
-			convertDefault = extension.ToUpper();
-			convertTo.Remove(convertDefault);
-			
-			IsValidFile = ValidFileHelper.IsValid(extension);
-			string fileName = e.File.Name;
-			ffmpeg = FFmpegFactory.CreateFFmpeg(new FFmpegConfig() { Log = true });
+    void WriteLogs(Logs log)
+    {
+        Console.WriteLine($"{log.Type}: message: {log.Message}");
+    }
 
-			await ffmpeg.Load();
+    private async void InputFileUploaded(InputFileChangeEventArgs e)
+    {
+        canViewConvertScreen = false;
 
-			if (!ffmpeg.IsLoaded)
-			{
-				Message = "Error";
-			}
+        if (e.File != null && e.FileCount > 0)
+        {
+            canViewConvertScreen = true;
 
-			buffer = new byte[e.File.Size];
+            string extension = Path.GetExtension(e.File.Name).Replace(".", string.Empty);
 
-			Message = convertDefault;
-		
+            // convertDefault = extension.ToUpper();
 
-			ffmpeg.WriteFile(fileName, buffer);
+            convertFrom = ValidFileHelper.fileTypesSupported.Where(file => file != convertDefault).ToList();
+            convertTo = ValidFileHelper.fileTypesSupported;
 
-			outputFileName = @"C:\Users\LENOVO\Downloads\test.jpg";
-			await ffmpeg.Run("-i", fileName, outputFileName);
-		}
-		else
-		{
-			Message = "Not Found";
-		}
-	}
+            var removed = convertTo.Remove(extension.ToUpper());
 
-	void OnDragEnter(DragEventArgs e)
-	{
-		HoverClass = "hover";
-	}
+            IsValidFile = ValidFileHelper.IsValid(extension);
+            string fileName = e.File.Name;
+            ffmpeg = FFmpegFactory.CreateFFmpeg(new FFmpegConfig() { Log = true });
 
-	void OnDragLeave(DragEventArgs e)
-	{
-		HoverClass = string.Empty;
-	}
+            await ffmpeg.Load();
+
+            if (!ffmpeg.IsLoaded)
+            {
+                Message = "Error";
+            }
+
+            buffer = new byte[e.File.Size];
+
+            Message = convertDefault;
+
+
+            ffmpeg.WriteFile(fileName, buffer);
+
+            outputFileName = @"C:\Users\LENOVO\Downloads\test.jpg";
+            await ffmpeg.Run("-i", fileName, outputFileName);
+        }
+        else
+        {
+            Message = "Not Found";
+        }
+    }
+
+    void OnDragEnter(DragEventArgs e)
+    {
+        HoverClass = "hover";
+    }
+
+    void OnDragLeave(DragEventArgs e)
+    {
+        HoverClass = string.Empty;
+    }
 }
