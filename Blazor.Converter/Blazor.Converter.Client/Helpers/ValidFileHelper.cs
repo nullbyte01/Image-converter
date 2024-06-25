@@ -2,7 +2,7 @@
 {
     public static class ValidFileHelper
     {
-        private static List<string> fileTypesSupported;
+        public static List<string> fileTypesSupported;
         static ValidFileHelper()
         {
             fileTypesSupported = new List<string>()

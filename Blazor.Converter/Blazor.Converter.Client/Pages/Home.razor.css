@@ -47,8 +47,8 @@
     font-family: Helvetica;
     font-size: 15px;
     font-weight: bold;
-    margin-top: -65px;
-    padding-left: 600px;
+    margin-top: -45px;
+    margin-left: 650px;
 }
 
 #get-file {
@@ -60,6 +60,8 @@
     float: left;
     text-align: center;
     list-style: none;
+    margin-top: -50px;
+    margin-left: 400px;
 }
 
 #post-file {
@@ -71,8 +73,19 @@
     float: left;
     text-align: center;
     list-style: none;
+    margin-top: -50px;
+    margin-left: 850px;
 }
 
 .btn-success {
     float: right;
+    margin-top: -50px;
+    margin-right: 50px;
+
+}
+
+h4 {
+    text-align: center;
+    font-family: Helvetica;
+    font-weight: bold;
 }
