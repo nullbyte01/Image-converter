@@ -13,17 +13,13 @@
                 <p>Or</p>
                 <InputFile class="btn btn-primary" @ondragenter="OnDragEnter"
                            @ondragleave="OnDragLeave" OnChange="@InputFileUploaded">Upload</InputFile>
-
             </div>
         </div>
 
         @if (canViewConvertScreen)
         {
             <div class="container p-3 my-3 bg-dark">
-                <p class="convert-text">Convert</p>
-
-
-                @* <label for="size">PNG</label> *@
+                <p class="convert-text">@FileName</p>
                 <select id="get-file" name="get-file" disabled>
                     @if (convertFrom != null)
                     {
@@ -32,12 +28,8 @@
                             <option>@ext</option>
                         }
                     }
-
                 </select>
-
                 <p class="to">TO</p>
-
-                @* <label for="color">JPG</label> *@
                 <select id="post-file" name="post-file">
 
                     @if (convertTo != null)
@@ -48,7 +40,6 @@
                         }
                     }
                 </select>
-
                 <button type="button" class="btn btn-success">Convert</button>
             </div>
         }
@@ -65,59 +56,23 @@
 <p style="color:@(IsValidFile?"Green":"Red")">@Message</p>
 
 @code {
+
+    #region Properties
+
     private string Message = "";
     private bool IsValidFile = false;
     private string HoverClass = string.Empty;
-    FFMPEG ffmpeg;
     string outputFileName = string.Empty;
-    byte[] buffer;
     public List<string> convertFrom { get; set; }
     public List<string> convertTo { get; set; }
-    public string convertDefault { get; set; }
     public bool canViewConvertScreen { get; set; } = false;
+    public string FileName { get; set; }
 
-    protected override void OnInitialized()
-    {
+    #endregion
 
-    }
+    #region Methods
 
-    protected async override Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-
-            if (FFmpegFactory.Runtime == null)
-            {
-                FFmpegFactory.Logger += WriteLogs;
-                FFmpegFactory.Progress += ProgressChange;
-            }
-
-            await FFmpegFactory.Init(JsRuntime);
-            StateHasChanged();
-        }
-    }
-
-    async void ProgressChange(Progress progress)
-    {
-        Console.WriteLine($"PROGRESSCHANGED: {progress.Ratio}");
-
-        if (progress.Ratio == 1)
-        {
-            var response = await ffmpeg.ReadFile(outputFileName);
-
-            // FFmpegFactory.DownloadBufferAsFile(response, outputFileName, "image/jpg");
-            Message = FFmpegFactory.CreateURLFromBuffer(buffer, outputFileName, "image/jpg");
-
-            StateHasChanged();
-        }
-    }
-
-    void WriteLogs(Logs log)
-    {
-        Console.WriteLine($"{log.Type}: message: {log.Message}");
-    }
-
-    private async void InputFileUploaded(InputFileChangeEventArgs e)
+    private void InputFileUploaded(InputFileChangeEventArgs e)
     {
         canViewConvertScreen = false;
 
@@ -127,33 +82,16 @@
 
             string extension = Path.GetExtension(e.File.Name).Replace(".", string.Empty);
 
-            // convertDefault = extension.ToUpper();
+            FileName = e.File.Name;
 
-            convertFrom = ValidFileHelper.fileTypesSupported.Where(file => file != convertDefault).ToList();
-            convertTo = ValidFileHelper.fileTypesSupported;
+            convertFrom = new List<string>();
+            convertFrom.AddRange(ValidFileHelper.fileTypesSupported.Where(file => file == extension.ToUpper()).ToList());
 
-            var removed = convertTo.Remove(extension.ToUpper());
+            convertTo = new List<string>();
+            convertTo.AddRange(ValidFileHelper.fileTypesSupported);
+            convertTo.Remove(extension.ToUpper());
 
             IsValidFile = ValidFileHelper.IsValid(extension);
-            string fileName = e.File.Name;
-            ffmpeg = FFmpegFactory.CreateFFmpeg(new FFmpegConfig() { Log = true });
-
-            await ffmpeg.Load();
-
-            if (!ffmpeg.IsLoaded)
-            {
-                Message = "Error";
-            }
-
-            buffer = new byte[e.File.Size];
-
-            Message = convertDefault;
-
-
-            ffmpeg.WriteFile(fileName, buffer);
-
-            outputFileName = @"C:\Users\LENOVO\Downloads\test.jpg";
-            await ffmpeg.Run("-i", fileName, outputFileName);
         }
         else
         {
@@ -170,4 +108,5 @@
     {
         HoverClass = string.Empty;
     }
+    #endregion
 }
