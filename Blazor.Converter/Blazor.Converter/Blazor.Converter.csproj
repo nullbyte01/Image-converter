@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Blazor.Converter.Client\Blazor.Converter.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.4" />
+    <PackageReference Include="SpawnDev.BlazorJS.FFmpegWasm" Version="1.3.0" />
   </ItemGroup>
 
 </Project>

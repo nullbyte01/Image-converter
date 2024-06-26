@@ -1,5 +1,6 @@
 using Blazor.Converter.Client.Pages;
 using Blazor.Converter.Components;
+using SpawnDev.BlazorJS;
 
 namespace Blazor.Converter
 {
@@ -12,6 +13,8 @@ namespace Blazor.Converter
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveWebAssemblyComponents();
+
+            builder.Services.AddBlazorJSRuntime();
 
             var app = builder.Build();
 

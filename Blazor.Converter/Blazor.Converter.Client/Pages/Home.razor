@@ -59,6 +59,13 @@
 
     #region Properties
 
+    [Inject]
+    BlazorJSRuntime JS { get; set; }
+
+    string baseURLFFmpeg = "https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/umd";
+    string baseURLCore = "https://unpkg.com/@ffmpeg/core@0.12.3/dist/umd";
+    FFmpeg? ffmpeg = null;
+
     private string Message = "";
     private bool IsValidFile = false;
     private string HoverClass = string.Empty;
@@ -72,26 +79,119 @@
 
     #region Methods
 
-    private void InputFileUploaded(InputFileChangeEventArgs e)
+    async Task LoadFFMPEG()
+    {
+        StateHasChanged();
+        if (JS.IsUndefined("FFmpegWASM"))
+        {
+            var FFmpegObjUrl = await ToBlobURL($"{baseURLFFmpeg}/ffmpeg.js", "application/javascript", (js) => js.Replace("new Worker(new URL(e.p+e.u(814),e.b),{type:void 0})", "new Worker(r.worker814URL,{type:void 0})"));
+            await JS.Import(FFmpegObjUrl);
+            URL.RevokeObjectURL(FFmpegObjUrl);
+        }
+
+        ffmpeg = new FFmpeg();
+        ffmpeg.OnLog += FFmpeg_OnLog;
+        ffmpeg.OnProgress += FFmpeg_OnProgress;
+
+        await ffmpeg.Load(new FFMessageLoadConfig
+            {
+                WorkerLoadURL = await ToBlobURL($"{baseURLFFmpeg}/814.ffmpeg.js", "application/javascript"),
+                CoreURL = await ToBlobURL($"{baseURLCore}/ffmpeg-core.js", "application/javascript"),
+                WasmURL = await ToBlobURL($"{baseURLCore}/ffmpeg-core.wasm", "application/wasm"),
+            });
+
+        StateHasChanged();
+    }
+
+    void FFmpeg_OnLog(FFmpegLogEvent ev)
+    {
+        // logMessage = ev.Message;
+        JS.Log("FFmpeg_OnLog", ev.Message);
+        StateHasChanged();
+    }
+
+    void FFmpeg_OnProgress(FFmpegProgressEvent ev)
+    {
+        var progress = ev.Progress;
+        var time = ev.Time;
+        // progressMessage = $"{progress * 100} % (transcoded time: {time / 1000000} s)";
+        JS.Log("FFmpeg_OnProgress", ev.Time, ev.Progress);
+        StateHasChanged();
+    }
+
+    async Task<Uint8Array> FetchFile(string resource)
+    {
+        using var resp = await JS.Fetch(resource);
+        using var body = await resp.ArrayBuffer();
+        return new Uint8Array(body);
+    }
+    async Task<string> FetchText(string resource)
+    {
+        using var resp = await JS.Fetch(resource);
+        return await resp.Text();
+    }
+
+    async Task<string> ToBlobURL(string src, string mimeType)
+    {
+        using var data = await FetchFile(src);
+        using var blob = new Blob(new Uint8Array[] { data }, new BlobOptions { Type = mimeType });
+        return URL.CreateObjectURL(blob);
+    }
+    async Task<string> ToBlobURL(string src, string mimeType, Func<string, string> patcher)
+    {
+        var text = await FetchText(src);
+        if (patcher != null) text = patcher(text);
+        using var blob = new Blob(new string[] { text }, new BlobOptions { Type = mimeType });
+        return URL.CreateObjectURL(blob);
+    }
+
+    private async void InputFileUploaded(InputFileChangeEventArgs e)
     {
         canViewConvertScreen = false;
 
         if (e.File != null && e.FileCount > 0)
         {
-            canViewConvertScreen = true;
+            await LoadFFMPEG();
 
             string extension = Path.GetExtension(e.File.Name).Replace(".", string.Empty);
-
-            FileName = e.File.Name;
-
-            convertFrom = new List<string>();
-            convertFrom.AddRange(ValidFileHelper.fileTypesSupported.Where(file => file == extension.ToUpper()).ToList());
-
-            convertTo = new List<string>();
-            convertTo.AddRange(ValidFileHelper.fileTypesSupported);
-            convertTo.Remove(extension.ToUpper());
-
             IsValidFile = ValidFileHelper.IsValid(extension);
+            if (IsValidFile)
+            {
+                canViewConvertScreen = true;
+
+                FileName = e.File.Name;
+
+                convertFrom = new List<string>();
+                convertFrom.AddRange(ValidFileHelper.fileTypesSupported.Where(file => file == extension.ToUpper()).ToList());
+
+                convertTo = new List<string>();
+                convertTo.AddRange(ValidFileHelper.fileTypesSupported);
+                convertTo.Remove(extension.ToUpper());
+
+                StateHasChanged();
+
+                var buffer = new byte[e.File.Size];
+                var stream = e.File.OpenReadStream();
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    int read;
+                    while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        ms.Write(buffer, 0, read);
+                    }
+                }
+
+                await ffmpeg.WriteFile(FileName, buffer);
+                StateHasChanged();
+                var ret = await ffmpeg.Exec(new string[] { "-i", FileName, "1.jpg" });
+                StateHasChanged();
+
+                using var data = await ffmpeg.ReadFileUint8Array("output.mp4");
+                using var blob = new Blob(new Uint8Array[] { data }, new BlobOptions { Type = "image/jpg" });
+
+                var objSrc = URL.CreateObjectURL(blob);
+
+            }
         }
         else
         {
