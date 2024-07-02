@@ -1,0 +1,53 @@
+﻿@page "/"
+
+<div class="container">
+    <h1>Image Converter</h1>
+    <div class="row">
+        <div class="dashed-border p-5 mt-5 @HoverClass">
+            <div class="flex-centered">
+                <p>Drag and Drop file here</p>
+                <p>Or</p>
+                <input type="file" @ref=fileInputRef class="btn btn-primary" @ondragenter="OnDragEnter"
+                           @ondragleave="OnDragLeave">Upload</input>
+            </div>
+        </div>
+
+        @if (canViewConvertScreen)
+        {
+            <div class="container p-3 my-3 bg-dark">
+                <p class="convert-text">@FileName</p>
+                <select id="get-file" name="get-file" disabled>
+                    @if (convertFrom != null)
+                    {
+                        @foreach (var ext in convertFrom)
+                        {
+                            <option>@ext</option>
+                        }
+                    }
+                </select>
+                <p class="to">TO</p>
+                <select id="post-file" name="post-file">
+
+                    @if (convertTo != null)
+                    {
+                        @foreach (var ext in convertTo)
+                        {
+                            <option>@ext</option>
+                        }
+                    }
+                </select>
+                <button type="button" class="btn btn-success">Convert</button>
+            </div>
+        }
+
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <h4>How to Convert Images?</h4>
+    </div>
+</footer>
+
+<p style="color:@(IsValidFile?"Green":"Red")">@Message</p>
+<a href=@downloadLocation>Click here to download</a>

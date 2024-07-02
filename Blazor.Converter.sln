@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.Converter", "Blazor.Converter\Blazor.Converter\Blazor.Converter.csproj", "{170A0681-9BEB-446C-ADE8-49771385F3A6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blazor.Converter.Client", "Blazor.Converter\Blazor.Converter.Client\Blazor.Converter.Client.csproj", "{D70EBC32-9666-4615-823C-F60C1B56982C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageConverter", "ImageConverter\ImageConverter.csproj", "{7BA52D3C-3EA7-4D82-85EE-7AD84FEC29EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{170A0681-9BEB-446C-ADE8-49771385F3A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{170A0681-9BEB-446C-ADE8-49771385F3A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{170A0681-9BEB-446C-ADE8-49771385F3A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{170A0681-9BEB-446C-ADE8-49771385F3A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D70EBC32-9666-4615-823C-F60C1B56982C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D70EBC32-9666-4615-823C-F60C1B56982C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D70EBC32-9666-4615-823C-F60C1B56982C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D70EBC32-9666-4615-823C-F60C1B56982C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BA52D3C-3EA7-4D82-85EE-7AD84FEC29EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BA52D3C-3EA7-4D82-85EE-7AD84FEC29EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BA52D3C-3EA7-4D82-85EE-7AD84FEC29EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BA52D3C-3EA7-4D82-85EE-7AD84FEC29EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
