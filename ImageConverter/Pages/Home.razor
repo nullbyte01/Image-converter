@@ -1,53 +1,58 @@
 ﻿@page "/"
 
 <div class="container">
-    <h1>Image Converter</h1>
+    <div class="row">
+        <h1>Image Converter</h1>
+    </div>
     <div class="row">
         <div class="dashed-border p-5 mt-5 @HoverClass">
             <div class="flex-centered">
                 <p>Drag and Drop file here</p>
                 <p>Or</p>
                 <input type="file" @ref=fileInputRef class="btn btn-primary" @ondragenter="OnDragEnter"
-                           @ondragleave="OnDragLeave">Upload</input>
+                       @ondragleave="OnDragLeave">Upload</input>
             </div>
         </div>
 
         @if (canViewConvertScreen)
         {
             <div class="container p-3 my-3 bg-dark">
-                <p class="convert-text">@FileName</p>
-                <select id="get-file" name="get-file" disabled>
-                    @if (convertFrom != null)
-                    {
-                        @foreach (var ext in convertFrom)
-                        {
-                            <option>@ext</option>
-                        }
-                    }
-                </select>
-                <p class="to">TO</p>
-                <select id="post-file" name="post-file">
-
-                    @if (convertTo != null)
-                    {
-                        @foreach (var ext in convertTo)
-                        {
-                            <option>@ext</option>
-                        }
-                    }
-                </select>
-                <button type="button" class="btn btn-success">Convert</button>
+                <div class="row justify-content-center align-items-center text-center text-md-start">
+                    <div class="col-12 col-md-5 mb-3 mb-md-0">
+                        <span class="text-light fw-bold">@FileName</span>
+                    </div>
+                    <div class="col-12 col-md-4 mb-3 mb-md-0">
+                        <div class="d-flex flex-column flex-md-row align-items-center justify-content-center justify-content-md-start">
+                            <select class="p-2 mb-2 mb-md-0" disabled>
+                                @if (convertFrom != null)
+                                {
+                                    @foreach (var ext in convertFrom)
+                                    {
+                                        <option>@ext</option>
+                                    }
+                                }
+                            </select>
+                            <span class="text-light mx-md-3">TO</span>
+                            <select class="p-2" @bind="selectedExtension">
+                                @if (convertTo != null)
+                                {
+                                    @foreach (var ext in convertTo)
+                                    {
+                                        <option>@ext</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <button type="button" class="btn btn-success p-2 w-100" @onclick="OnConvertClick">Convert</button>
+                    </div>
+                </div>
             </div>
-        }
 
+        }
+    </div>
+    <div class="row">
+        <span>@Message</span>
     </div>
 </div>
-
-<footer>
-    <div class="container">
-        <h4>How to Convert Images?</h4>
-    </div>
-</footer>
-
-<p style="color:@(IsValidFile?"Green":"Red")">@Message</p>
-<a href=@downloadLocation>Click here to download</a>

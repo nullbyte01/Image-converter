@@ -8,10 +8,8 @@
             fileTypesSupported = new List<string>()
             {
                 "PNG",
-                "JPEG",
                 "TIF",
                 "JPG",
-                "SVG",
                 "ICO",
                 "GIF"
             };

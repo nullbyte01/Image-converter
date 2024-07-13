@@ -14,7 +14,7 @@ namespace ImageConverter.Pages
 {
     public partial class Home
     {
-        #region Propertie
+        #region Properties
 
         [Inject]
         BlazorJSRuntime JS { get; set; }
@@ -31,11 +31,10 @@ namespace ImageConverter.Pages
         public string FileName { get; set; }
         bool beenInit = false;
         ElementReference fileInputRef;
-        //ElementReference downRef;
         HTMLInputElement? fileInput;
         File? inputFileObj;
         FFmpeg? ffmpeg = null;
-        string downloadLocation { get; set; }
+        public string selectedExtension { get; set; }
         protected override void OnAfterRender(bool firstRender)
         {
             if (!beenInit)
@@ -98,40 +97,16 @@ namespace ImageConverter.Pages
                     convertTo.Remove(extension.ToUpper());
 
                     StateHasChanged();
-
-                    var inputDir = "/input";
-                    await ffmpeg.CreateDir(inputDir);
-                    await ffmpeg.MountWorkerFS(inputDir, new FSMountWorkerFSOptions { Files = new[] { inputFileObj } });
-                    var inputFile = $"{inputDir}/{FileName}";
-
-                    var outputFile = $"{Path.GetFileNameWithoutExtension(FileName)}.jpg";
-
+                }
+                else
+                {
+                    Message = "Invalid File Format selected";
                     StateHasChanged();
-
-                    await ffmpeg.Exec(new string[] { "-i", inputFile, outputFile });
-                    StateHasChanged();
-                    await ffmpeg.Unmount(inputDir);
-                    await ffmpeg.DeleteDir(inputDir);
-                    using var data = await ffmpeg.ReadFileUint8Array(outputFile);
-                    using var blob = new Blob(new Uint8Array[] { data }, new BlobOptions { Type = "image/jpg" });
-                    await blob.StartDownload(outputFile);
-                    ////outputFileName = outputFile;
-                    //var objSrc = URL.CreateObjectURL(blob);
-                    //downloadLocation = objSrc;
-
-                    //var obj = JsonSerializer.Serialize(blob);
-                    //var fileStream = new MemoryStream(new UTF8Encoding(true).GetBytes(obj));
-                    //using var streamRef = new DotNetStreamReference(stream: fileStream);
-
-                    //JS.
-                    //await JSRuntime.InvokeVoidAsync("downloadFileFromStream", outputFile, streamRef);
-                    StateHasChanged();
-                    Message = "Downloading started";
                 }
             }
             else
             {
-                Message = "Not Found";
+                Message = "Invalid File";
             }
         }
 
@@ -143,6 +118,36 @@ namespace ImageConverter.Pages
         void OnDragLeave(DragEventArgs e)
         {
             HoverClass = string.Empty;
+        }
+
+        async Task OnConvertClick()
+        {
+            if (inputFileObj != null)
+            {
+                var inputDir = "/input";
+                await ffmpeg.CreateDir(inputDir);
+                await ffmpeg.MountWorkerFS(inputDir, new FSMountWorkerFSOptions { Files = new[] { inputFileObj } });
+                var inputFile = $"{inputDir}/{FileName}";
+
+                var outputFile = $"{Path.GetFileNameWithoutExtension(FileName)}.{selectedExtension.ToLower()}";
+
+                StateHasChanged();
+
+                await ffmpeg.Exec(new string[] { "-i", inputFile, outputFile });
+                StateHasChanged();
+                await ffmpeg.Unmount(inputDir);
+                await ffmpeg.DeleteDir(inputDir);
+                using var data = await ffmpeg.ReadFileUint8Array(outputFile);
+                using var blob = new Blob(new Uint8Array[] { data }, new BlobOptions { Type = $"image/{selectedExtension.ToLower()}" });
+                await blob.StartDownload(outputFile);
+
+                StateHasChanged();
+                Message = "Downloading will be starting soon";
+            }
+            else
+            {
+                Message = "Invalid File";
+            }
         }
     }
 }
