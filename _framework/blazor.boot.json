@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "ImageConverter",
   "resources": {
-    "hash": "sha256-nRLVafnlS/sc23PDFkhQpzyWCG0HI+YgwVWJjwAnOuM=",
+    "hash": "sha256-xYH7se5o2b7V3juLGTk2AOt8CHC8EEQn14ctFZoKJQs=",
     "jsModuleNative": {
       "dotnet.native.8.0.7.pz4gz8k5i5.js": "sha256-7mUf77X9kA8XQSanKrMFFP42Cd+qNdOCGHeI1c5JxXo="
     },
@@ -17,7 +17,7 @@
       "icudt_no_CJK.dat": "sha256-L7sV7NEYP37/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs="
     },
     "assembly": {
-      "ImageConverter.wasm": "sha256-v6Nu46Q/YPbwWnpf2GfsgcnaG52PmPBMNte7B3kzvMw=",
+      "ImageConverter.wasm": "sha256-hOXSrVUsrDy7dxcNv4BKdTpEEC/dRaoHUhpWfEFMWyI=",
       "Microsoft.AspNetCore.Components.wasm": "sha256-VKT3WYrS0dkpFPeqKuHxVqJwg7kNHrrNQVi/38+m1Eo=",
       "Microsoft.AspNetCore.Components.Web.wasm": "sha256-4tmx4uC98MyKjCuM9ErBZwXpqkLx4fwVZfJQIv+Y0+A=",
       "Microsoft.AspNetCore.Components.WebAssembly.wasm": "sha256-Lx3hm0lrkE4uOJE79pdZnKpYhH0HAaOXdsTupkOpFlg=",
